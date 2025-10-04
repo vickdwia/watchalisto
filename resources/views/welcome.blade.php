@@ -12,7 +12,7 @@
   <!-- Header -->
   <header class="d-flex justify-content-between align-items-center px-4 py-3">
     <div class="d-flex align-items-center">
-      <span class="fs-2 me-2">🎬</span>
+      <img src="{{ asset('images/logoup.png') }}" alt="Watchalisto Logo" class="logo-img me-2">
       <span class="fs-2 fw-bold">Watchalisto</span>
     </div>
     <div class="d-flex gap-2">
