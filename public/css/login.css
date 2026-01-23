@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Login - Watchalisto</title>
-  <!-- <link rel="stylesheet" href="{{ asset('css/login.css') }}?v={{ time() }}"> -->
-</head>
-
-<style>
-  * {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -141,28 +130,3 @@ button[type="submit"]:active {
         font-size: 24px;
     }
 }
-</style>
-
-<body>
-  <div class="login-wrapper">
-    <img src="{{ asset('images/logoup.png') }}" alt="Watchalisto" style="width:70px;margin-bottom:15px;">
-    <h1>Welcome Back</h1>
-    <p>Login ke akun Watchalisto kamu</p>
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-        <input type="text" name="name" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-          <div class="remember-me">
-              <input type="checkbox" id="remember" name="remember">
-              <label for="remember">Remember me</label> 
-          </div>
-        <button type="submit">Log In</button>
-    </form>
-
-    <p class="mt-4">Belum punya akun? 
-        <a href="{{ route('register') }}">Daftar sekarang</a>
-    </p>
-  </div>
-</body>
-</html>

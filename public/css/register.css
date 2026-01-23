@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Register - Watchalisto</title>
-  <!-- <link rel="stylesheet" href="{{ asset('css/register.css') }}?v={{ time() }}"> -->
-</head>
-
-<style>
-    /* ===========================
+/* ===========================
    Watchalisto Register Page CSS
    =========================== */
 body {
@@ -143,56 +132,3 @@ body {
         max-width: 420px;
     }
 }
-</style>
-
-<body>
-  <div class="register-wrapper">
-    <img src="{{ asset('images/logoup.png') }}" alt="Watchalisto" style="width:70px;margin-bottom:15px;">
-    <h1>Create Account</h1>
-    <p>Daftar akun Watchalisto baru</p>
-
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-        <div class="form-grid">
-            <!-- Username -->
-        <div class="form-group">
-            <input type="text" name="name" placeholder="Username" value="{{ old('Name') }}" required autofocus>
-        @error('username')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-        </div>
-
-        <!-- Email -->
-        <div class="form-group">
-            <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
-        @error('email')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-            <input type="password" name="password" placeholder="Password" required>
-        @error('password')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="form-group">
-            <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
-        @error('password_confirmation')
-            <span class="error-message">{{ $message }}</span>
-        @enderror
-        </div>
-        </div>
-
-        <button type="submit">Register</button>
-    </form>
-
-    <p class="mt-4">Sudah punya akun? 
-        <a href="{{ route('login') }}">Login sekarang</a>
-    </p>
-  </div>
-</body>
-</html>

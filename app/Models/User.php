@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Media;
 
 class User extends Authenticatable
 {
@@ -44,5 +45,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function media()
+    {
+        return $this->belongsToMany(Media::class, 'user_media_lists')
+            ->withPivot(['status', 'progress', 'rating']) ->withTimestamps();
+    }
+
+    public function mediaList()
+    {
+        return $this->hasMany(UserMediaList::class);
     }
 }
