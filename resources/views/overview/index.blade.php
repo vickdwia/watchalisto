@@ -2,488 +2,306 @@
 
 @section('content')
 <style>
-    /* ===== GLOBAL STYLES ===== */
-    * {
-        box-sizing: border-box;
-    }
+/* ===== GLOBAL ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    /* ===== PAGE LAYOUT ===== */
-    .overview-page {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #0a0e1a 0%, #0f1419 100%);
-        padding: 40px 24px;
-        color: #e5e7eb;
-    }
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+.overview-page {
+    min-height: 100vh;
+    padding: 32px 16px;
+}
 
-    /* ===== HEADER ===== */
-    .page-header {
-        margin-bottom: 32px;
-    }
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
-    .page-header h1 {
-        font-size: 36px;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 8px;
-    }
+/* ===== HEADER ===== */
+.list-header {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: rgba(17, 25, 40, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+}
 
-    .page-subtitle {
-        color: #9ca3af;
-        font-size: 15px;
-    }
+.list-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #14b8a6;
+    margin-bottom: 6px;
+}
 
-    /* ===== NAVIGATION TABS ===== */
-    .content-tabs {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 32px;
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 6px;
-        border-radius: 16px;
-        width: fit-content;
-    }
+.list-header p {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+}
 
-    .tab-link {
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #9ca3af;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
+/* ===== TABS ===== */
+.content-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(17, 25, 40, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
 
-    .tab-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
+.content-tabs::-webkit-scrollbar { display: none; }
 
-    .tab-link:hover {
-        color: #e5e7eb;
-    }
+.tab-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
 
-    .tab-link:hover::before {
-        opacity: 1;
-    }
+.tab-link:hover {
+    background: rgba(20, 184, 166, 0.1);
+    color: #e5e7eb;
+}
 
-    .tab-link.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
-    }
+.tab-link.active {
+    background: rgba(20, 184, 166, 0.15);
+    color: #14b8a6;
+    border-bottom: 2px solid #14b8a6;
+}
 
-    .tab-link.active::before {
-        opacity: 0;
-    }
+/* ===== STATS CARDS ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
 
-    /* ===== STATS CARDS ===== */
+.stat-card {
+    background: rgba(17, 25, 40, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(20, 184, 166, 0.4);
+}
+
+.stat-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    opacity: 0.8;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.view-all-link {
+    color: #a78bfa;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.view-all-link:hover {
+    color: #c4b5fd;
+}
+
+/* ===== MEDIA GRID (mirip drama-grid) ===== */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+/* ===== MEDIA CARD (mirip drama-card) ===== */
+.media-card {
+    background: rgba(17, 25, 40, 0.5);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.media-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.media-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: #111827;
+}
+
+/* ===== OVERLAY INFO (on hover) ===== */
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.85),
+        rgba(0,0,0,0.2),
+        transparent
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.media-card:hover .card-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.card-overlay .title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.card-overlay .release-year {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: #9ca3af;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    opacity: 0.3;
+}
+
+.empty-text {
+    font-size: 16px;
+}
+
+/* ===== MEDIA TABS STYLE ===== */
+.nav-tabs-custom .nav-link.active {
+    color: #14b8a6;
+    border-bottom: 2px solid #14b8a6;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
     .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .stat-card {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 24px;
-        border-radius: 16px;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .stat-card:hover::before {
-        opacity: 1;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(139, 92, 246, 0.3);
-    }
-
-    .stat-icon {
-        font-size: 32px;
-        margin-bottom: 12px;
-    }
-
-    .stat-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 4px;
-    }
-
-    .stat-label {
-        font-size: 13px;
-        color: #9ca3af;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-weight: 600;
-    }
-
-    /* ===== SECTIONS ===== */
-    .section {
-        margin-bottom: 48px;
-    }
-
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
 
     .section-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #fff;
-    }
-
-    .view-all-link {
-        color: #a78bfa;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 600;
-        transition: color 0.3s ease;
-    }
-
-    .view-all-link:hover {
-        color: #c4b5fd;
-    }
-
-    /* ===== MEDIA GRID ===== */
-    .media-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 24px;
-    }
-
-    /* ===== MEDIA CARDS ===== */
-    .media-card {
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-    }
-
-    .media-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 1;
-    }
-
-    .media-card:hover::before {
-        opacity: 1;
-    }
-
-    .media-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-        border-color: rgba(139, 92, 246, 0.3);
-    }
-
-    .media-card-image {
-        position: relative;
-        overflow: hidden;
-        padding-top: 140%;
-    }
-
-    .media-card img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .media-card:hover img {
-        transform: scale(1.1);
-    }
-
-    .media-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
-        padding: 16px 12px 12px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: 2;
-    }
-
-    .media-card:hover .media-overlay {
-        opacity: 1;
-    }
-
-    /* ===== MEDIA INFO ===== */
-    .media-info {
-        padding: 16px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .media-info h4 {
-        font-size: 15px;
-        margin-bottom: 10px;
-        font-weight: 700;
-        line-height: 1.4;
-        color: #fff;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 42px;
-    }
-
-    .media-type-badge {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        z-index: 3;
-        font-size: 10px;
-        font-weight: 700;
-        padding: 6px 12px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        backdrop-filter: blur(10px);
-    }
-
-    .media-type-badge.drama {
-        background: rgb(20, 184, 166);
-        border: 1px solid rgba(13, 148, 136, 0.4);
-        color: #ffffff;
-    }
-
-    .media-type-badge.manhwa {
-        background: rgba(59, 130, 246, 0.2);
-        border: 1px solid rgba(59, 130, 246, 0.5);
-        color: #93c5fd;
-    }
-
-    .genre-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 10px;
-        min-height: 24px;
-    }
-
-    .genre-tags span {
-        display: inline-block;
-        font-size: 10px;
-        background: rgba(139, 92, 246, 0.15);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        color: #c4b5fd;
-        padding: 4px 8px;
-        border-radius: 8px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-
-    /* ===== STATUS BADGE ===== */
-    .status-wrapper {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        z-index: 3;
-    }
-
-    .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 6px 12px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .status::before {
-        content: '';
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        animation: pulse 2s ease-in-out infinite;
-    }
-
-    .status.finished {
-        background: rgba(13, 148, 136, 0.2);
-        border: 1px solid rgb(20, 184, 166);
-        color: #2d8879;
-    }
-
-    .status.finished::before {
-        background: #2d8879;
-    }
-
-    .status.ongoing {
-        background: rgba(250, 204, 21, 0.2);
-        border: 1px solid rgba(250, 204, 21, 0.5);
-        color: #fde047;
-    }
-
-    .status.ongoing::before {
-        background: #facc15;
-    }
-
-    @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 80px 20px;
-    }
-
-    .empty-state-icon {
-        font-size: 64px;
-        margin-bottom: 16px;
-        opacity: 0.3;
-    }
-
-    .empty-text {
-        color: #9ca3af;
         font-size: 18px;
-        font-weight: 500;
     }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 1024px) {
-        .media-grid {
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        }
-    }
-
-    @media (max-width: 768px) {
-        .overview-page {
-            padding: 24px 16px;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-        }
-
-        .content-tabs {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .content-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-link {
-            padding: 10px 20px;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .media-grid {
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 16px;
-        }
-
-        .section-title {
-            font-size: 20px;
-        }
-    }
+}
 </style>
 
 <div class="overview-page">
     <div class="container">
 
         {{-- HEADER --}}
-        <div class="page-header">
+        <div class="list-header">
             <h1>Overview</h1>
-            <p class="page-subtitle">Your complete media collection at a glance</p>
+            <p>Your complete media collection at a glance</p>
         </div>
 
-        {{-- NAVIGATION TABS --}}
+        {{-- TABS --}}
         <div class="content-tabs">
-            <a href="{{ route('media.overview') }}" class="tab-link active">
-                Overview
+            <a href="{{ route('media.overview') }}" class="tab-link {{ request()->routeIs('media.overview') ? 'active' : '' }}">Overview</a>
+            <a href="{{ route('drama.index') }}" class="tab-link {{ request()->routeIs('drama.index') ? 'active' : '' }}">Drama List</a>
+            <a href="{{ route('manhwa.index') }}" class="tab-link {{ request()->routeIs('manhwa.index') ? 'active' : '' }}">Manhwa List</a>
+            <a href="{{ route('diary.index') }}" class="tab-link {{ request()->routeIs('diary.index') ? 'active' : '' }}">Diary</a>
+            <!-- <a href="{{ route('stats.index') }}" class="tab-link {{ request()->routeIs('stats.index') ? 'active' : '' }}">Stats</a> -->
+        </div>
+
+        {{-- MEDIA TYPE FILTER TABS --}}
+        <div class="nav nav-tabs nav-tabs-custom mb-4">
+            <a href="{{ route('media.overview') }}?type=drama" 
+            class="nav-link {{ request('type') === 'drama' || !request('type') ? 'active' : '' }}">
+                Dramas
             </a>
-            <a href="{{ route('drama.index') }}" class="tab-link">
-                Drama List
-            </a>
-            <a href="{{ route('manhwa.index') }}" class="tab-link">
-                Manhwa List
-            </a>
-            <a href="{{ route('media.stats') }}" class="tab-link">
-                Stats
+            <a href="{{ route('media.overview') }}?type=manhwa" 
+            class="nav-link {{ request('type') === 'manhwa' ? 'active' : '' }}">
+                Manhwa
             </a>
         </div>
 
@@ -524,37 +342,10 @@
             <div class="media-grid">
                 @forelse ($recentMedia as $media)
                     <div class="media-card">
-
-                        {{-- Media Type Badge --}}
-                        <div class="media-type-badge {{ $media->type }}">
-                            {{ ucfirst($media->type) }}
-                        </div>
-
-
-                        {{-- Status Badge --}}
-                        <div class="status-wrapper">
-                            <span class="status {{ $media->status }}">
-                                {{ ucfirst($media->status) }}
-                            </span>
-                        </div>
-
-                        {{-- Image --}}
-                        <div class="media-card-image">
-                            <img src="{{ Storage::url($media->poster) }}" alt="{{ $media->title }}">
-                            
-                            {{-- Hover Overlay --}}
-                            <div class="media-overlay">
-                                <div class="genre-tags">
-                                    @foreach (optional($media->media)->genres?->take(2) ?? [] as $genre)
-                                        <span>{{ $genre->name }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Info --}}
-                        <div class="media-info">
-                            <h4>{{ $media->title }}</h4>
+                        <img src="{{ Storage::url($media->poster) }}" alt="{{ $media->title }}">
+                        <div class="card-overlay">
+                            <div class="title">{{ $media->title }}</div>
+                            <div class="release-year">{{ $media->release_year ?? '—' }}</div>
                         </div>
                     </div>
                 @empty
@@ -566,58 +357,52 @@
             </div>
         </section>
 
-        {{-- CURRENTLY WATCHING --}}
+        {{-- CURRENTLY WATCHING / READING --}}
         <section class="section">
             <div class="section-header">
-                <h2 class="section-title">Currently Watching</h2>
-                <a href="#" class="view-all-link">View All →</a>
+                <h2 class="section-title">
+                    @if(request('type') === 'manhwa')
+                        Currently Reading
+                    @elseif(request('type') === 'drama')
+                        Currently Watching
+                    @else
+                        Currently Watching / Reading
+                    @endif
+                </h2>
+                <a href="{{ 
+                    request('type') === 'manhwa' 
+                        ? route('manhwa.index', ['list_status' => 'watching']) 
+                        : route('drama.index', ['list_status' => 'watching']) 
+                }}" class="view-all-link">View All →</a>
             </div>
 
             <div class="media-grid">
-                @forelse ($ongoingMedia as $media)
-                    <div class="media-card">
-
-                        {{-- Media Type Badge --}}
-                        <div class="media-type-badge {{ $media->type }}">
-                            {{ ucfirst($media->type) }}
-                        </div>
-
-
-                        {{-- Status Badge --}}
-                        <div class="status-wrapper">
-                            <span class="status {{ $media->status }}">
-                                {{ ucfirst($media->status) }}
-                            </span>
-                        </div>
-
-                        {{-- Image --}}
-                        <div class="media-card-image">
-                            <img src="{{ Storage::url($media->poster) }}" alt="{{ $media->title }}">
-                            
-                            {{-- Hover Overlay --}}
-                            <div class="media-overlay">
-                                <div class="genre-tags">
-                                    @foreach (optional($media->media)->genres?->take(2) ?? [] as $genre)
-                                        <span>{{ $genre->name }}</span>
-                                    @endforeach
-                                </div>
+                @forelse ($ongoingMedia as $item)
+                    @if($item->media)
+                        <div class="media-card">
+                            <img src="{{ Storage::url($item->media->poster) }}" alt="{{ $item->media->title }}">
+                            <div class="card-overlay">
+                                <div class="title">{{ $item->media->title }}</div>
+                                <div class="release-year">{{ $item->media->release_year ?? '—' }}</div>
                             </div>
                         </div>
-
-                        {{-- Info --}}
-                        <div class="media-info">
-                            <h4>{{ $media->title }}</h4>
-                        </div>
-                    </div>
+                    @endif
                 @empty
                     <div class="empty-state">
                         <div class="empty-state-icon">⏸️</div>
-                        <p class="empty-text">No ongoing media</p>
+                        <p class="empty-text">
+                            @if(request('type') === 'manhwa')
+                                No manhwa in progress
+                            @elseif(request('type') === 'drama')
+                                No drama in progress
+                            @else
+                                No ongoing media
+                            @endif
+                        </p>
                     </div>
                 @endforelse
             </div>
         </section>
-
     </div>
 </div>
 @endsection

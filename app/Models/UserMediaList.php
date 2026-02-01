@@ -11,12 +11,18 @@ class UserMediaList extends Model
         'media_id',
         'status',
         'progress',
+        'extra_progress',
         'rating',
         'started_date',
         'finished_date',
         'notes',
     ];
 
+    protected $casts = [
+        'started_date'  => 'date',
+        'finished_date' => 'date',
+    ];
+    
     public function user()
     {
         return $this->belongsTo(User::class);

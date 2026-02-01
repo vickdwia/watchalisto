@@ -8,25 +8,53 @@ use App\Models\UserMediaList;
 
 class OverviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $user = auth()->user();
+        $typeFilter = $request->query('type', 'all'); // default: all
+
+        // kondisi berdasarkan tipe
+        $mediaTypeCondition = $typeFilter === 'all' 
+        ? fn($q) => $q 
+        : fn($q) => $q->where('type', $typeFilter);
+
         // Total media
-        $totalMedia = Media::count();
+        $totalMedia = UserMediaList::where('user_id', $user->id)->count();
 
         // Total drama
-        $totalDramas = Media::where('type', 'drama')->count();
+        $totalDramas = UserMediaList::where('user_id', $user->id)
+            ->whereHas('media', function ($q) {
+                $q->where('type', 'drama');
+            })
+            ->count();
 
         // Total manhwa
-        $totalManhwas = Media::where('type', 'manhwa')->count();
+        $totalManhwas = UserMediaList::where('user_id', $user->id)
+            ->whereHas('media', function ($q) {
+                $q->where('type', 'manhwa');
+            })
+            ->count();
 
         // Completed media (based on user progress)
-        $completedMedia = UserMediaList::where('status', 'completed')->count();
+        $completedMedia = UserMediaList::where('user_id', $user->id)
+                    ->where('status', 'completed')
+                    ->count();
 
-        // Ongoing media
-        $ongoingMedia = UserMediaList::where('status', 'watching')->get();
+        /// Currently Watching Dramas
+        $ongoingMedia = UserMediaList::where('user_id', $user->id)
+                    ->where('status', 'watching')
+                    ->whereHas('media', $mediaTypeCondition)
+                    ->with('media')
+                    ->get();
 
         // Recently added media (5 terakhir)
-        $recentMedia = Media::latest()->take(5)->get();
+        $recentMedia = UserMediaList::where('user_id', $user->id)
+                    ->whereHas('media', $mediaTypeCondition)
+                    ->with('media')
+                    ->latest('created_at')
+                    ->take(5)
+                    ->get()
+                    ->pluck('media');
 
         return view('overview.index', compact(
             'totalMedia',

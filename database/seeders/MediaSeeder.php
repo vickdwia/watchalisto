@@ -275,13 +275,13 @@ class MediaSeeder extends Seeder
             ],
             [
                 'synopsis' => 'Perburuan psikopat kejam mengungkap sisi gelap moral dan genetika manusia.',
-                'poster' => 'posters/Trigger.jpg',
-                'release_year' => 2025,
+                'poster' => 'posters/mouse.jpg',
+                'release_year' => 2021,
                 'status' => 'ongoing'
             ]
         );
         $media->genres()->sync(
-            Genre::whereIn('name', ['Thriller', 'Mystery', 'Action'])->pluck('id')
+            Genre::whereIn('name', ['Thriller', 'Mystery'])->pluck('id')
         );
     }
 }

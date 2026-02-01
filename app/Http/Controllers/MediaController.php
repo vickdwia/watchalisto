@@ -6,20 +6,34 @@ use App\Models\Drama;
 use App\Models\Manhwa;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class MediaController extends Controller
 {
     public function search(Request $request)
     {
-        $query = $request->query('q');
-
-        if (!$query) {
-            return response()->json([]);
-        }
-
-        return Media::where('title', 'like', "%{$query}%")
+        $query = $request->get('q');
+        
+        $results = Media::with(['dramaDetail', 'manhwaDetail'])
+            ->where('title', 'LIKE', "%{$query}%")
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(function($media) {
+                return [
+                    'id' => $media->id,
+                    'title' => $media->title,
+                    'type' => $media->type,
+                    'poster' => $media->poster,
+                    'release_year' => $media->release_year,
+                    'total_episode' => $media->dramaDetail?->total_episode,
+                    'total_season' => $media->dramaDetail?->total_season,
+                    'total_chapter' => $media->manhwaDetail?->total_chapter,
+                    'total_volume' => $media->manhwaDetail?->total_volume,
+                ];
+            });
+
+        return response()->json($results);
     }
 
     public function overview()
@@ -77,5 +91,47 @@ class MediaController extends Controller
             'recentMedia',
             'ongoingMedia'
         ));
+    }
+
+    public function show($id)
+    {
+        $media = Media::with([
+                'genres', 
+                'userMediaLists', 
+                'dramaDetail', 
+                'manhwaDetail'
+            ])
+            ->withAvg('userMediaLists','rating')
+            ->findOrFail($id);
+
+        // Optional: kalau mau cek drama/manhwa
+        // $type = $media->type;
+
+        $related = Media::whereHas('genres', function($q) use ($media) {
+            $q->whereIn('genres.id', $media->genres->pluck('id'));
+        })
+        ->where('id', '!=', $media->id)
+        ->limit(8)
+        ->get();
+
+        return view('media.mediadetail', compact('media', 'related'));
+    }
+
+    public function toggleList($id)
+    {
+        $user = Auth::user();
+        $media = Media::with('userMediaLists')->findOrFail($id);
+
+        if ($media->isInUserList($user->id)) {
+            // Hapus dari list
+            $user->media()->detach($media->id);
+            $message = 'Removed from your list.';
+        } else {
+            // Tambah ke list dengan status default "planned"
+            $user->media()->attach($media->id, ['status' => 'planned']);
+            $message = 'Added to your list.';
+        }
+
+        return back()->with('status', $message);
     }
 }

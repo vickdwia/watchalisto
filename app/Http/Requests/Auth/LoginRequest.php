@@ -46,7 +46,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'name' => trans('auth.failed'),  // Ubah dari 'email' ke 'name'
+                'name' => 'Username atau password salah.',  // Ubah dari 'email' ke 'name'
             ]);
         }
 

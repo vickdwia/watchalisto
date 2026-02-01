@@ -34,33 +34,49 @@ body {
     transition: transform 0.3s ease;
     min-width: 160px;
 }
+
 .media-card:hover {
     transform: scale(1.05);
     z-index: 2;
 }
+
 .media-card img {
     width: 100%;
     height: 240px;
     object-fit: cover;
     display: block;
 }
+
 .media-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* dorong konten ke bawah */
     padding: 1rem;
     opacity: 0;
     transition: opacity 0.3s ease;
     color: white;
 }
+
 .media-card:hover .media-overlay {
     opacity: 1;
 }
+
 .media-overlay h6 {
     font-size: 0.95rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
+
+.genre-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
 .genre-tag {
     display: inline-block;
     background: rgba(20, 184, 166);
@@ -69,9 +85,10 @@ body {
     border-radius: 4px;
     font-size: 0.75rem;
     margin-top: 0.25rem;
+    white-space: nowrap;
 }
 
-/* Horizontal Scroll */
+/* Horizontal Scroll 
 .horizontal-scroll {
     display: flex;
     gap: 1.25rem;
@@ -86,6 +103,12 @@ body {
 .horizontal-scroll::-webkit-scrollbar-thumb {
     background: #14b8a6;
     border-radius: 3px;
+} */
+
+.drama-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
 }
 
 /* Filter Group */
@@ -139,11 +162,42 @@ body {
     color: #14b8a6;
     border-bottom: 2px solid #14b8a6;
 }
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+}
+
+.page-item .page-link {
+    background: rgba(17, 25, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+.page-item.active .page-link {
+    background: rgba(20, 184, 166, 0.25);
+    border-color: #14b8a6;
+    color: #14b8a6;
+}
+
+.page-item.disabled .page-link {
+    opacity: 0.4;
+}
+
+.pagination a {
+    text-decoration: none;
+}
 </style>
 @endpush
 
-
-@section('content')
 @section('content')
 <div class="container-fluid px-4 py-4">
     <div class="row g-4">
@@ -153,11 +207,11 @@ body {
             <div class="glass-card p-4 mb-4">
                 <h5 class="text-white mb-3">Search Filters</h5>
 
-                <form method="GET" action="{{ route('drama.browse') }}">
+                <form method="GET" action="{{ route('browse.index', $type) }}">
                     <!-- Keyword -->
                     <div class="filter-group">
                         <label class="filter-label">Keyword</label>
-                        <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="e.g. Solo Leveling...">
+                        <input type="text" class="form-control" name="search" value="{{ request('search') }}" placeholder="e.g. Dear X...">
                     </div>
 
                     <!-- Genre -->
@@ -198,26 +252,81 @@ body {
 
         <!-- Main Content -->
         <div class="col-lg-9">
-            <h5 class="section-title">Dramas</h5>
-            <div class="horizontal-scroll mb-4">
-                @forelse($dramas as $drama)
-                    <div class="media-card">
-                        <img src="{{ Storage::url($drama->poster) }}" alt="{{ $drama->title }}">
+            <h5 class="section-title">
+                @switch(request('sort'))
+                    @case('newest') Newest {{ ucfirst($type) }} @break
+                    @case('popular') Most Popular {{ ucfirst($type) }} @break
+                    @default Trending {{ ucfirst($type) }}
+                @endswitch
+            </h5>
+
+            <ul class="nav nav-tabs nav-tabs-custom mb-4">
+                @foreach (['trending' => 'Trending', 'newest' => 'Newest', 'popular' => 'Most Popular'] as $key => $label)
+                    <li class="nav-item">
+                        <a class="nav-link {{ request('sort', 'trending') == $key ? 'active' : '' }}"
+                        href="{{ route('browse.index', array_merge(['type' => $type], request()->all(), ['sort' => $key])) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+
+
+            <div class="drama-grid mb-4">
+                @forelse($medias as $media)
+                    <a href="{{ route('media.show', $media->id) }}" class="media-card">
+                        <img src="{{ Storage::url($media->poster) }}" alt="{{ $media->title }}">
                         <div class="media-overlay">
-                            <h6>{{ $drama->title }}</h6>
-                            <div class="text-warning small">★ {{ $drama->rating ?? 'N/A' }}</div>
-                            @foreach($drama->genres as $genre)
+                            <h6>{{ $media->title }}</h6>
+                            <div class="text-warning small">★ {{ $media->user_media_lists_avg_rating ? number_format($media->user_media_lists_avg_rating,1) : 'N/A' }}</div>
+                            <div class="genre-tags-wrapper">
+                                @foreach($media->genres as $genre)
                                 <span class="genre-tag">{{ $genre->name }}</span>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 @empty
-                    <p class="text-muted">No dramas found.</p>
+                    <p class="text-muted">No {{ $type }} found.</p>
                 @endforelse
             </div>
-            <div class="mt-4">
-                {{ $dramas->links() }}
-            </div>  <!-- Pagination -->
+            @if ($medias->hasPages())
+                <div class="pagination-wrapper">
+                    <div class="pagination">
+
+                        {{-- Prev --}}
+                        @if ($medias->onFirstPage())
+                            <span class="page-item disabled"><span class="page-link">‹</span></span>
+                        @else
+                            <a class="page-item" href="{{ $medias->previousPageUrl() }}">
+                                <span class="page-link">‹</span>
+                            </a>
+                        @endif
+
+                        {{-- Pages --}}
+                        @foreach ($medias->getUrlRange(1, $medias->lastPage()) as $page => $url)
+                            @if ($page == $medias->currentPage())
+                                <span class="page-item active">
+                                    <span class="page-link">{{ $page }}</span>
+                                </span>
+                            @else
+                                <a class="page-item" href="{{ $url }}">
+                                    <span class="page-link">{{ $page }}</span>
+                                </a>
+                            @endif
+                        @endforeach
+
+                        {{-- Next --}}
+                        @if ($medias->hasMorePages())
+                            <a class="page-item" href="{{ $medias->nextPageUrl() }}">
+                                <span class="page-link">›</span>
+                            </a>
+                        @else
+                            <span class="page-item disabled"><span class="page-link">›</span></span>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>

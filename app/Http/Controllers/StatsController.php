@@ -19,6 +19,8 @@ class StatsController extends Controller
         ])->get();
 
         // Hitung stats
+        $timeSpent = $this->calculateTimeSpent($mediaList);
+        
         $stats = [
             'total_media'   => $mediaList->count(),
             'total_drama'   => $mediaList->where('media.type', 'drama')->count(),
@@ -30,7 +32,9 @@ class StatsController extends Controller
 
             'avg_rating'    => round($mediaList->whereNotNull('rating')->avg('rating'), 1),
 
-            'time_spent'    => $this->calculateTimeSpent($mediaList),
+            'days_watched'  => $timeSpent
+            ? round($timeSpent / 60 / 24, 1)
+            : 0,
         ];
 
         return view('stats.index', compact('stats'));
@@ -42,15 +46,22 @@ class StatsController extends Controller
 
         foreach ($mediaList as $item) {
             $media = $item->media;
+            if (!$media || !$item->progress) continue;
 
-            if (!$media) continue;
+            if ($media->type === 'drama') {
+                $duration =
+                    $media->dramaDetail->episode_duration
+                    ?? 60; // default estimasi
 
-            if ($media->type === 'drama' && $media->dramaDetail) {
-                $totalMinutes += $item->progress * $media->dramaDetail->episode_duration;
+                $totalMinutes += $item->progress * $duration;
             }
 
-            if ($media->type === 'manhwa' && $media->manhwaDetail) {
-                $totalMinutes += $item->progress * $media->manhwaDetail->avg_read_time;
+            if ($media->type === 'manhwa') {
+                $readTime =
+                    $media->manhwaDetail->avg_read_time
+                    ?? 5; // default estimasi 
+
+                $totalMinutes += $item->progress * $readTime;
             }
         }
 

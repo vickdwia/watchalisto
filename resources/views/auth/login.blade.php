@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Login - Watchalisto</title>
+  <link rel="icon" type="image/png" href="{{ asset('images/logoup.png') }}">
   <!-- <link rel="stylesheet" href="{{ asset('css/login.css') }}?v={{ time() }}"> -->
 </head>
 
@@ -132,6 +133,25 @@ button[type="submit"]:active {
     color: rgb(20, 184, 166);
     text-shadow: 0 0 8px rgb(20, 184, 166);
 }
+
+.remember-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0 10px;
+}
+
+.forgot-link {
+    font-size: 13px;
+    color: rgb(20, 184, 166);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.forgot-link:hover {
+    text-shadow: 0 0 8px rgb(20, 184, 166);
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     .login-wrapper {
@@ -140,7 +160,15 @@ button[type="submit"]:active {
     .login-wrapper h1 {
         font-size: 24px;
     }
+
+    .remember-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
 }
+
+
 </style>
 
 <body>
@@ -153,10 +181,21 @@ button[type="submit"]:active {
         @csrf
         <input type="text" name="name" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
-          <div class="remember-me">
-              <input type="checkbox" id="remember" name="remember">
-              <label for="remember">Remember me</label> 
-          </div>
+        @error('name')
+            <p style="color:#ef4444;font-size:13px;margin:4px 0 6px;">
+                {{ $message }}
+            </p>
+        @enderror
+          <div class="remember-row">
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Remember me</label> 
+            </div>
+
+            <a href="{{ route('password.request') }}" class="forgot-link">
+                Lupa password?
+            </a>
+        </div>
         <button type="submit">Log In</button>
     </form>
 

@@ -1,580 +1,764 @@
 @extends('layouts.usernav')
 
-@section('content')
+@push('styles')
 <style>
-    /* ===== GLOBAL STYLES ===== */
-    * {
-        box-sizing: border-box;
-    }
+/* ===== GLOBAL ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    /* ===== PAGE LAYOUT ===== */
-    .manhwa-page {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #0a0e1a 0%, #0f1419 100%);
-        padding: 40px 24px;
-        color: #e5e7eb;
-    }
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+.drama-page {
+    min-height: 100vh;
+    padding: 32px 16px;
+    background: transparent;
+}
 
-    /* ===== HEADER ===== */
-    .page-header {
-        margin-bottom: 32px;
-    }
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
 
-    .page-header h1 {
-        font-size: 36px;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 8px;
-    }
+/* ===== HEADER ===== */
+.page-header {
+    margin-bottom: 24px;
+}
 
-    .page-subtitle {
-        color: #9ca3af;
-        font-size: 15px;
-    }
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #14b8a6;
+}
 
-    /* ===== NAVIGATION TABS ===== */
-    .content-tabs {
-        display: flex;
-        gap: 4px;
-        margin-bottom: 32px;
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 6px;
-        border-radius: 16px;
-        width: fit-content;
-    }
+.page-subtitle {
+    color: #9ca3af;
+    font-size: 14px;
+}
 
-    .tab-link {
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #9ca3af;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
+/* ===== TABS ===== */
+.content-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(17, 25, 40, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
 
-    .tab-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
+.content-tabs::-webkit-scrollbar { display: none; }
 
-    .tab-link:hover {
-        color: #e5e7eb;
-    }
+.tab-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
 
-    .tab-link:hover::before {
-        opacity: 1;
-    }
+.tab-link:hover {
+    background: rgba(20, 184, 166, 0.1);
+    color: #e5e7eb;
+}
 
-    .tab-link.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
-    }
+.tab-link.active {
+    background: rgba(20, 184, 166, 0.15);
+    color: #14b8a6;
+    border-bottom: 2px solid #14b8a6;
+}
 
-    .tab-link.active::before {
-        opacity: 0;
-    }
+/* ===== LAYOUT ===== */
+.content-wrapper {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+}
 
-    /* ===== CONTENT WRAPPER ===== */
+/* ===== SIDEBAR ===== */
+.filter-sidebar {
+    background: rgba(17, 25, 40, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 20px;
+    border-radius: 12px;
+    position: sticky;
+    top: 24px;
+    height: fit-content;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #e5e7eb;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.filter-group h3 {
+    font-size: 12px;
+    color: #14b8a6;;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.filter-option:hover {
+    background: rgba(20, 184, 166, 0.1);
+}
+
+.filter-option input {
+    width: 16px;
+    height: 16px;
+    accent-color: #14b8a6;;
+}
+
+.btn-filter {
+    width: 100%;
+    padding: 10px;
+    background: rgba(20, 184, 166, 0.25);
+    border: 1px solid rgba(20, 184, 166, 0.4);
+    color: #14b8a6;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.btn-filter:hover {
+    background: rgba(20, 184, 166, 0.35);
+}
+
+/* ===== DRAMA GRID ===== */
+.drama-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* sesuaikan lebar poster */
+    gap: 12px;
+}
+
+/* ===== CARD ===== */
+.drama-card {
+    background: rgba(17, 25, 40, 0.5);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* display: flex;
+    flex-direction: column;
+    cursor: pointer; */
+}
+
+.drama-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.poster {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover;
+    background: #111827;
+    display: block;
+}
+
+/* ===== OVERLAY INFO (on hover) ===== */
+.card-overlay {
+    position: absolute;
+    inset: 0; /* full overlay */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.85),
+        rgba(0,0,0,0.2),
+        transparent
+    );
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.drama-card:hover .card-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.overlay-menu-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    z-index: 5; /* WAJIB */
+}
+
+.overlay-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.release-year {
+    font-size: 12px;
+    font-weight: 400;
+    color: #9ca3af;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-dot.finished { background: #10b981; }
+.status-dot.ongoing { background: #f59e0b; }
+
+.progress-bar {
+    height: 4px;
+    background: rgba(255,255,255,.1);
+    border-radius: 2px;
+    margin: 6px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #14b8a6;
+    border-radius: 2px;
+}
+
+.score {
+    font-size: 13px;
+    color: #fde047;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: #9ca3af;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    fill: #9ca3af;
+}
+
+.empty-state p {
+    font-size: 16px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
     .content-wrapper {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 28px;
-        align-items: start;
+        grid-template-columns: 1fr;
     }
 
-    /* ===== SIDEBAR ===== */
     .filter-sidebar {
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        padding: 24px;
-        border-radius: 16px;
-        position: sticky;
-        top: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-
-    .sidebar-title {
-        font-size: 18px;
-        font-weight: 700;
+        position: static;
         margin-bottom: 24px;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 
-    .sidebar-title::before {
-        content: "⚡";
-        font-size: 20px;
+    .drama-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
+}
 
-    /* ===== FILTER GROUPS ===== */
-    .filter-group {
-        margin-bottom: 28px;
-        padding-bottom: 28px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
+/* ===== DROPDOWN ===== */
+.filter-sidebar .dropdown {
+    position: relative;
+    margin-bottom: 12px;
+}
 
-    .filter-group:last-of-type {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
+.dropbtn {
+    width: 100%;
+    background: rgba(17, 25, 40, 0.6);
+    border: 1px solid rgba(255,255,255,.1);
+    color: white;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+}
 
-    .filter-group h3 {
-        font-size: 12px;
-        color: #a78bfa;
-        margin-bottom: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 700;
-    }
+.dropbtn::after {
+    content: "▾";
+    float: right;
+    opacity: .7;
+}
 
-    .filter-option {
-        display: flex;
-        align-items: center;
-        padding: 10px 12px;
-        margin-bottom: 6px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-    }
+.dropdown-content {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: 6px;
+    background: #020617;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    padding: 8px 0;
+    z-index: 20;
+    max-height: 240px;
+    overflow-y: auto;
+}
 
-    .filter-option:hover {
-        background: rgba(139, 92, 246, 0.1);
-        transform: translateX(4px);
-    }
+.dropdown.open .dropdown-content {
+    display: block;
+}
 
-    .filter-option input[type="radio"],
-    .filter-option input[type="checkbox"] {
-        margin: 0;
-        margin-right: 12px;
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
-        accent-color: #8b5cf6;
-    }
+.dropdown-content .filter-option {
+    padding: 8px 12px;
+    font-size: 13px;
+}
 
-    .filter-option label {
-        flex: 1;
-        font-size: 14px;
-        color: #e5e7eb;
-        cursor: pointer;
-        margin: 0;
-        user-select: none;
-        font-weight: 500;
-    }
+.rating-dropdown {
+    padding: 8px;
+}
 
-    .filter-option input:checked ~ label {
-        color: #a78bfa;
-        font-weight: 600;
-    }
+.rating-option {
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: .85;
+}
 
-    /* ===== BUTTONS ===== */
-    .btn-filter {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: #fff;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
-    }
+.rating-option:hover {
+    background: rgba(255,255,255,.06);
+    opacity: 1;
+}
 
-    .btn-filter:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-    }
+.star-rating {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    font-size: 20px;
+    cursor: pointer;
+}
 
-    .btn-filter:active {
-        transform: translateY(0);
-    }
+.star-rating span {
+    color: #374151;
+    transition: color .15s ease;
+}
 
-    /* ===== MANHWA GRID ===== */
-    .manhwa-list-wrapper {
-        min-height: 400px;
-    }
+.star-rating span.active {
+    color: #facc15;
+}
 
-    .manhwa-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 24px;
-    }
+.sort-option {
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #e5e7eb;
+}
 
-    /* ===== MANHWA CARDS ===== */
-    .manhwa-card {
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-    }
+.sort-option:hover {
+    background: rgba(20, 184, 166, 0.15);
+    color: #14b8a6;
+}
 
-    .manhwa-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 1;
-    }
+/* ===== LIST HEADER (TYPE 1) ===== */
+.list-header {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: rgba(17, 25, 40, 0.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+}
 
-    .manhwa-card:hover::before {
-        opacity: 1;
-    }
+.list-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #14b8a6;
+    margin-bottom: 6px;
+}
 
-    .manhwa-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-        border-color: rgba(139, 92, 246, 0.3);
-    }
+.list-header p {
+    font-size: 14px;
+    color: #9ca3af;
+    margin: 0;
+}
 
-    .manhwa-card-image {
-        position: relative;
-        overflow: hidden;
-        padding-top: 140%;
-    }
-
-    .manhwa-card img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .manhwa-card:hover img {
-        transform: scale(1.1);
-    }
-
-    .manhwa-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
-        padding: 16px 12px 12px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: 2;
-    }
-
-    .manhwa-card:hover .manhwa-overlay {
-        opacity: 1;
-    }
-
-    /* ===== MANHWA INFO ===== */
-    .manhwa-info {
-        padding: 16px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .manhwa-info h4 {
-        font-size: 15px;
-        margin-bottom: 10px;
-        font-weight: 700;
-        line-height: 1.4;
-        color: #fff;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 42px;
-    }
-
-    .genre-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 10px;
-        min-height: 24px;
-    }
-
-    .genre-tags span {
-        display: inline-block;
-        font-size: 10px;
-        background: rgba(139, 92, 246, 0.15);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        color: #c4b5fd;
-        padding: 4px 8px;
-        border-radius: 8px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-
-    /* ===== STATUS BADGE ===== */
-    .status-wrapper {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        z-index: 3;
-    }
-
-    .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 6px 12px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .status::before {
-        content: '';
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        animation: pulse 2s ease-in-out infinite;
-    }
-
-    .status.finished {
-        background: rgba(34, 197, 94, 0.2);
-        border: 1px solid rgba(34, 197, 94, 0.5);
-        color: #86efac;
-    }
-
-    .status.finished::before {
-        background: #22c55e;
-    }
-
-    .status.ongoing {
-        background: rgba(250, 204, 21, 0.2);
-        border: 1px solid rgba(250, 204, 21, 0.5);
-        color: #fde047;
-    }
-
-    .status.ongoing::before {
-        background: #facc15;
-    }
-
-    @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 80px 20px;
-    }
-
-    .empty-state-icon {
-        font-size: 64px;
-        margin-bottom: 16px;
-        opacity: 0.3;
-    }
-
-    .empty-text {
-        color: #9ca3af;
-        font-size: 18px;
-        font-weight: 500;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 1024px) {
-        .content-wrapper {
-            grid-template-columns: 240px 1fr;
-            gap: 20px;
-        }
-
-        .manhwa-list {
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .manhwa-page {
-            padding: 24px 16px;
-        }
-
-        .content-wrapper {
-            grid-template-columns: 1fr;
-        }
-
-        .filter-sidebar {
-            position: static;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-        }
-
-        .content-tabs {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .content-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-link {
-            padding: 10px 20px;
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        .manhwa-list {
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 16px;
-        }
-    }
 </style>
+@endpush
 
-<div class="manhwa-page">
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const dropdowns   = document.querySelectorAll('.dropdown');
+    const stars       = document.querySelectorAll('#ratingStars span');
+    const ratingInput = document.getElementById('ratingInput');
+    const form        = document.querySelector('.filter-sidebar form');
+    const ratingOpts  = document.querySelectorAll('.rating-option');
+
+    /* =====================
+       DROPDOWN TOGGLE
+    ===================== */
+    if (dropdowns.length) {
+        dropdowns.forEach(dropdown => {
+            const btn = dropdown.querySelector('.dropbtn');
+            if (!btn) return;
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('open');
+                });
+
+                dropdown.classList.toggle('open');
+            });
+        });
+
+        document.addEventListener('click', () => {
+            dropdowns.forEach(d => d.classList.remove('open'));
+        });
+    }
+
+    /* =====================
+       STAR RATING (FILTER)
+       ala AniList
+    ===================== */
+    if (stars.length && ratingInput && form) {
+        stars.forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                const value = star.dataset.value;
+                ratingInput.value = value;
+
+                // visual active stars
+                stars.forEach(s => {
+                    s.classList.toggle(
+                        'active',
+                        Number(s.dataset.value) <= Number(value)
+                    );
+                });
+
+                // auto apply filter
+                form.submit();
+            });
+        });
+    }
+
+    /* =====================
+       ANY / NO RATING
+    ===================== */
+    if (ratingOpts.length && ratingInput && form) {
+        ratingOpts.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                const value = option.dataset.value;
+                ratingInput.value = value;
+
+                // reset star visual
+                stars.forEach(s => s.classList.remove('active'));
+
+                form.submit();
+            });
+        });
+    }
+
+    const sortInput = document.getElementById('sortInput');
+
+    document.querySelectorAll('.sort-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+
+            sortInput.value = option.dataset.value;
+            form.submit();
+        });
+    });
+});
+</script>
+@endpush
+
+
+
+@section('content')
+<div class="drama-page">
     <div class="container">
 
         {{-- HEADER --}}
-        <div class="page-header">
+        <div class="list-header">
             <h1>Manhwa List</h1>
-            <p class="page-subtitle">Discover and track your favorite dramas and manhwa</p>
+            <p>
+                {{ $manhwas->total() }} manhwas
+                • Sorted by {{ ucfirst(str_replace('_',' ', request('sort','rating'))) }}
+            </p>
         </div>
 
-        {{-- NAVIGATION TABS --}}
+
+
+        {{-- TABS --}}
         <div class="content-tabs">
-            <a href="{{ route('media.overview') }}" class="tab-link {{ request()->routeIs('media.overview') ? 'active' : '' }}">
-                Overview
-            </a>
-            <a href="{{ route('drama.index') }}" class="tab-link {{ request()->routeIs('drama.index') ? 'active' : '' }}">
-                Drama List
-            </a>
-            <a href="{{ route('manhwa.index') }}" class="tab-link {{ request()->routeIs('manhwa.index') ? 'active' : '' }}">
-                Manhwa List
-            </a>
-            <a href="{{ route('media.stats') }}" class="tab-link {{ request()->routeIs('media.stats') ? 'active' : '' }}">
-                Stats
-            </a>
+            <a href="{{ route('media.overview') }}" class="tab-link {{ request()->routeIs('media.overview') ? 'active' : '' }}">Overview</a>
+            <a href="{{ route('drama.index') }}" class="tab-link {{ request()->routeIs('drama.index') ? 'active' : '' }}">Drama List</a>
+            <a href="{{ route('manhwa.index') }}" class="tab-link {{ request()->routeIs('manhwa.index') ? 'active' : '' }}">Manhwa List</a>
+            <a href="{{ route('diary.index') }}" class="tab-link {{ request()->routeIs('diary.index') ? 'active' : '' }}">Diary</a>
+            <!-- <a href="{{ route('stats.index') }}" class="tab-link {{ request()->routeIs('stats.index') ? 'active' : '' }}">Stats</a> -->
         </div>
 
         <div class="content-wrapper">
 
             {{-- FILTER --}}
                 <aside class="filter-sidebar">
-                <form method="GET" action="{{ route('drama.index') }}">
+                    <form method="GET" action="{{ route('manhwa.index') }}">
+                    <input type="hidden" name="rating" id="ratingInput" value="{{ request('rating') }}">
+                    <input type="hidden" name="sort" id="sortInput">
+                    {{-- LISTS SECTION (Tanpa Dropdown) --}}
+                        <div class="filter-section">
+                            <h5 class="section-title">Lists</h5>
+                            
+                            <label class="filter-option">
+                                <input type="radio" name="list_status" value=""
+                                    {{ !request('list_status') ? 'checked' : '' }} onchange="this.form.submit()">
+                                All
+                            </label>
 
-                <div class="filter-group">
-                <h3>Status</h3>
+                            <label class="filter-option">
+                                <input type="radio" name="list_status" value="watching"
+                                    {{ request('list_status') === 'watching' ? 'checked' : '' }} onchange="this.form.submit()">
+                                Watching
+                            </label>
 
-                <label class="filter-option">
-                <input type="radio" name="status" value="" {{ request('status') === null ? 'checked' : '' }}>
-                All
-                </label>
+                            <label class="filter-option">
+                                <input type="radio" name="list_status" value="completed"
+                                    {{ request('list_status') === 'completed' ? 'checked' : '' }} onchange="this.form.submit()">
+                                Completed
+                            </label>
 
-                <label class="filter-option">
-                <input type="radio" name="status" value="finished" {{ request('status') === 'finished' ? 'checked' : '' }}>
-                Finished
-                </label>
+                            <label class="filter-option">
+                                <input type="radio" name="list_status" value="planned"
+                                    {{ request('list_status') === 'planned' ? 'checked' : '' }} onchange="this.form.submit()">
+                                Planned
+                            </label>
+                        </div>
 
-                <label class="filter-option">
-                <input type="radio" name="status" value="ongoing" {{ request('status') === 'ongoing' ? 'checked' : '' }}>
-                Ongoing
-                </label>
-                </div>
+                        {{-- FILTERS SECTION (Semua Dropdown) --}}
+                        <div class="filter-section">
+                            <h5 class="section-title">Filters</h5>
 
-                <div class="filter-group">
-                <h3>Genres</h3>
-                @foreach ($genres as $genre)
-                <label class="filter-option">
-                <input type="checkbox" name="genres[]" value="{{ $genre->id }}"
-                {{ in_array($genre->id, request('genres', [])) ? 'checked' : '' }}>
-                {{ $genre->name }}
-                </label>
-                @endforeach
-                </div>
-
-                <button class="btn-filter">Apply Filters</button>
-                </form>
-                </aside>
-
-            {{-- MANHWA LIST --}}
-            <section class="manhwa-list-wrapper">
-                <div class="manhwa-list">
-
-                    @forelse ($manhwas as $manhwa)
-                        <div class="manhwa-card">
-
-                            {{-- Status Badge --}}
-                            <div class="status-wrapper">
-                                <span class="status {{ $manhwa->status }}">
-                                    {{ ucfirst($manhwa->status) }}
-                                </span>
+                            {{-- STATUS DROPDOWN --}}
+                            <div class="dropdown">
+                                <button type="button" class="dropbtn">Status</button>
+                                <div class="dropdown-content">
+                                    <label class="filter-option">
+                                        <input type="radio" name="drama_status" value="" {{ !request('drama_status') ? 'checked' : '' }} onchange="this.form.submit()">
+                                        All
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" name="drama_status" value="finished" {{ request('drama_status') === 'finished' ? 'checked' : '' }} onchange="this.form.submit()">
+                                        Finished
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" name="drama_status" value="ongoing" {{ request('drama_status') === 'ongoing' ? 'checked' : '' }} onchange="this.form.submit()">
+                                        Ongoing
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            {{-- GENRES DROPDOWN --}} 
+                            <div class="dropdown">
+                                <button type="button" class="dropbtn">Genres</button>
+                                <div class="dropdown-content">
+                                    @foreach ($genres as $genre)
+                                        <label class="filter-option"><input type="checkbox" name="genres[]" value="{{ $genre->id }}" {{ in_array($genre->id, request('genres', [])) ? 'checked' : '' }} onchange="this.form.submit()">{{ $genre->name }}</label>
+                                    @endforeach
+                                </div>
                             </div>
 
-                            {{-- Image --}}
-                            <div class="manhwa-card-image">
-                                <img src="{{ asset($manhwa->poster) }}" alt="{{ $manhwa->title }}">
-                                
-                                {{-- Hover Overlay --}}
-                                <div class="manhwa-overlay">
-                                    <div class="genre-tags">
-                                        @foreach ($manhwa->genres->take(2) as $genre)
-                                            <span>{{ $genre->name }}</span>
-                                        @endforeach
+
+                            
+                            {{-- RATING DROPDOWN --}}
+                            <div class="dropdown">
+                                <button type="button" class="dropbtn">
+                                    Rating
+                                </button>
+
+                                <div class="dropdown-content rating-dropdown">
+                                    <!-- ANY RATING -->
+                                    <div class="rating-option js-rating-option" data-value="">
+                                        Any rating
+                                    </div>
+
+                                    <!-- NO RATING -->
+                                    <div class="rating-option js-rating-option" data-value="0">
+                                        No rating
+                                    </div>
+
+                                    <!-- STAR RATING -->
+                                    <div class="star-rating" id="ratingStars">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <span data-value="{{ $i }}">★</span>
+                                        @endfor
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- Info --}}
-                            <div class="manhwa-info">
-                                <h4>{{ $manhwa->title }}</h4>
+                            {{-- RELEASE YEAR DROPDOWN --}}
+                            <div class="dropdown">
+                                <button type="button" class="dropbtn">Release Year</button>
+
+                                <div class="dropdown-content">
+                                    <label class="filter-option">
+                                        <input type="radio" name="year" value=""
+                                            {{ !request('year') ? 'checked' : '' }}
+                                            onchange="this.form.submit()">
+                                        All
+                                    </label>
+
+                                    @foreach ($years as $year)
+                                        <label class="filter-option">
+                                            <input type="radio" name="year" value="{{ $year }}"
+                                                {{ request('year') == $year ? 'checked' : '' }}
+                                                onchange="this.form.submit()">
+                                            {{ $year }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- SORT DROPDOWN --}}
+                            <div class="filter-section">
+                            <h5 class="section-title">Sort</h5>
+                            <div class="dropdown">
+                                <button type="button" class="dropbtn">
+                                    {{ match(request('sort')) {
+                                        'title' => 'Title',
+                                        'newest' => 'Newest',
+                                        'oldest' => 'Oldest',
+                                        default => 'Rating'
+                                    } }}
+                                </button>
+                                <div class="dropdown-content">
+                                    <div class="sort-option" data-value="rating">
+                                        Rating
+                                    </div>
+
+                                    <div class="sort-option" data-value="title">
+                                        Title
+                                    </div>
+
+                                    <div class="sort-option" data-value="newest">
+                                        Newest
+                                    </div>
+
+                                    <div class="sort-option" data-value="oldest">
+                                        Oldest
+                                    </div>
+                                </div>
+                            </div>
+                    </form>
+                </aside>
+
+            {{-- DRAMA LIST --}}
+            <section>
+                <div class="drama-grid">
+
+                    @forelse ($manhwas as $manhwa)
+                        <div class="drama-card">
+                            <img src="{{ Storage::url($manhwa->media->poster) }}" class="poster">
+
+                            <div class="card-overlay">
+                                <!-- BUTTON ... -->
+                                <button
+                                    type="button"
+                                    class="overlay-menu-btn edit-media-btn"
+                                    data-media-id="{{ $manhwa->media->id }}"
+                                    data-poster="{{ Storage::url($manhwa->media->poster) }}"
+                                >
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+
+                                <!-- TEXT OVERLAY -->
+                                <div>
+                                    <div class="title">{{ $manhwa->media->title }}</div>
+                                    <div class="release-year">
+                                        {{ $manhwa->media->release_year ?? '—' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @empty
                         <div class="empty-state">
-                            <div class="empty-state-icon">📚</div>
-                            <p class="empty-text">No manhwa found with the selected filters</p>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 12l-4-4 4-4V12h4v2h-4z"/>
+                            </svg>
+                            <p>No manhwa found</p>
                         </div>
                     @endforelse
 
@@ -584,13 +768,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    // Auto-submit on filter change (optional)
-    // document.querySelectorAll('.filter-option input').forEach(input => {
-    //     input.addEventListener('change', () => {
-    //         input.closest('form').submit();
-    //     });
-    // });
-</script>
 @endsection

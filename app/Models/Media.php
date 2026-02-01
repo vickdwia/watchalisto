@@ -10,6 +10,10 @@ class Media extends Model
     protected $fillable = [
         'title',
         'type',
+        'release_year',
+        'status',
+        'poster',
+        'synopsis',
         // nanti bisa ditambah kolom lain
     ];
 
@@ -25,7 +29,7 @@ class Media extends Model
         return $this->belongsToMany(Genre::class);
     }
 
-    public function userLists()
+    public function userMediaLists()
     {
         return $this->hasMany(UserMediaList::class);
     }
@@ -47,5 +51,15 @@ class Media extends Model
             'manhwa' => optional($this->manhwaDetail)->total_chapter,
             default  => null,
         };
+    }
+
+    public function isInUserList($userId)
+    {
+        // Load relasi kalau belum di-load
+        if (!$this->relationLoaded('userMediaLists')) {
+            $this->load('userMediaLists');
+        }
+
+        return $this->userMediaLists->contains('user_id', $userId);
     }
 }

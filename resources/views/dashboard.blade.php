@@ -43,18 +43,87 @@
 .media-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,.9), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     padding: 1rem;
     opacity: 0;
-    transition: .3s;
+    transition: opacity 0.3s ease;
+    color: white;
 }
-.media-card:hover .media-overlay { opacity: 1; }
+
+.media-card:hover .media-overlay {
+    opacity: 1;
+}
+
+.media-overlay h6 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.genre-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+}
+
+.genre-tag {
+    display: inline-block;
+    background: rgba(20, 184, 166);
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
 
 /* Horizontal Scroll */
 .horizontal-scroll {
     display: flex;
     gap: 1rem;
     overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none; /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+.horizontal-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Optional: Efek fade-out di ujung kanan (biar lebih smooth) */
+.horizontal-scroll::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(17,25,40,0) 0%, rgba(17,25,40,0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Style tombol "Show All" */
+.btn-outline-info {
+    border-color: #14b8a6;
+    color: #14b8a6;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-info:hover {
+    background: rgba(20, 184, 166, 0.15);
+    border-color: #14b8a6;
+    color: #14b8a6;
+}
+
+.btn-outline-info i {
+    font-size: 0.9rem;
 }
 
 /* Section Title */
@@ -81,178 +150,124 @@
 @endpush
 
 @section('content')
-<div class="container-fluid px-4 py-4">
+<div class="container-fluid px-4 py-2">
     <div class="row g-4">
         
-        <!-- Left Sidebar - User Overview -->
-        <div class="col-lg-3">
-            <div class="glass-card p-4 mb-4">
-                <div class="text-center mb-3">
-                    <img src="https://via.placeholder.com/80" alt="Avatar" class="user-avatar mb-3">
-                    <h5 class="text-white mb-1">{{ auth()->user()->name }}</h5>
-                    <p class="text-muted small mb-0">Member since {{ auth()->user()->created_at->format('M Y') }}</p>
+                <!-- Left Sidebar - User Overview -->
+                <div class="col-lg-3">
+                    <div class="glass-card p-4 mb-4">
+                        <div class="text-center mb-3">
+                            <!-- <img src="https://via.placeholder.com/80 " alt="Avatar" class="user-avatar mb-3"> -->
+                             <i class="bi bi-person fs-2 mb-2"></i>
+                            <h5 class="text-white mb-1">{{ auth()->user()->name }}</h5>
+                            <p class="text-muted small mb-0">
+                                Member since {{ auth()->user()->created_at->format('M Y') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Quick Stats -->
-            <div class="glass-card p-4 mb-4">
-                <h6 class="text-white mb-3 fw-bold">Overview</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Total Watched</span>
-                        <span class="text-white fw-bold">127</span>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: 75%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Episodes</span>
-                        <span class="text-white fw-bold">2,431</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Days Watched</span>
-                        <span class="text-white fw-bold">64.2</span>
-                    </div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Mean Score</span>
-                        <span class="text-white fw-bold">7.8</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Top Genres -->
-            <div class="glass-card p-4">
-                <h6 class="text-white mb-3 fw-bold">Top Genres</h6>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white small">Action</span>
-                        <span class="badge-custom">42</span>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white small">Romance</span>
-                        <span class="badge-custom">38</span>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: 70%"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white small">Drama</span>
-                        <span class="badge-custom">35</span>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: 65%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-white small">Comedy</span>
-                        <span class="badge-custom">28</span>
-                    </div>
-                    <div class="progress-custom">
-                        <div class="progress-bar-custom" style="width: 50%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <div class="col-lg-9">
-            
             <!-- Stats Cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-3">
-                    <div class="stat-card text-center">
-                        <i class="bi bi-film fs-2 text-info mb-2"></i>
-                        <div class="stat-number">127</div>
-                        <div class="text-muted small">Total Watched</div>
+                <div class="col-lg-9 d-flex align-items-start">
+                    <div class="row g-3 w-100">
+
+                        {{-- Drama Completed --}}
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="bi bi-film fs-2 text-info mb-2"></i>
+                                <div class="stat-number">{{ $dramaCompleted }}</div>
+                                <div class="text-muted small">Drama Completed</div>
+                            </div>
+                        </div>
+
+                        {{-- Drama Watching --}}
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="bi bi-play-circle fs-2 text-success mb-2"></i>
+                                <div class="stat-number">{{ $dramaWatching }}</div>
+                                <div class="text-muted small">Drama Watching</div>
+                            </div>
+                        </div>
+
+                        {{-- Manhwa Completed --}}
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="bi bi-book fs-2 text-warning mb-2"></i>
+                                <div class="stat-number">{{ $manhwaCompleted }}</div>
+                                <div class="text-muted small">Manhwa Completed</div>
+                            </div>
+                        </div>
+
+                        {{-- Manhwa Reading --}}
+                        <div class="col-md-3">
+                            <div class="stat-card text-center">
+                                <i class="bi bi-journal-text fs-2 text-danger mb-2"></i>
+                                <div class="stat-number">{{ $manhwaReading }}</div>
+                                <div class="text-muted small">Manhwa Reading</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-card text-center">
-                        <i class="bi bi-play-circle fs-2 text-success mb-2"></i>
-                        <div class="stat-number">23</div>
-                        <div class="text-muted small">Watching</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card text-center">
-                        <i class="bi bi-bookmark-star fs-2 text-warning mb-2"></i>
-                        <div class="stat-number">45</div>
-                        <div class="text-muted small">Plan to Watch</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card text-center">
-                        <i class="bi bi-clock-history fs-2 text-danger mb-2"></i>
-                        <div class="stat-number">64.2</div>
-                        <div class="text-muted small">Days Watched</div>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Recent Activity -->
-            <div class="glass-card p-4 mb-4">
-                <h5 class="section-title">
-                    <i class="bi bi-activity"></i> Recent Activity
-                </h5>
-                
-                <div class="activity-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-white fw-semibold">Watched episode 12 of</span>
-                            <span class="text-info"> The Glory Season 2</span>
-                            <div class="text-muted small mt-1">
-                                <i class="bi bi-clock"></i> 2 hours ago
-                            </div>
-                        </div>
-                        <span class="badge-custom">Drama</span>
-                    </div>
-                </div>
+                <div class="glass-card p-4 mb-4">
+                    <h5 class="section-title">
+                        <i class="bi bi-activity"></i> Recent Activity
+                    </h5>
 
-                <div class="activity-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-white fw-semibold">Completed</span>
-                            <span class="text-success"> Solo Leveling</span>
-                            <span class="text-white"> and rated it </span>
-                            <span class="text-warning">★ 9.5</span>
-                            <div class="text-muted small mt-1">
-                                <i class="bi bi-clock"></i> 5 hours ago
-                            </div>
-                        </div>
-                        <span class="badge-custom">Manhwa</span>
-                    </div>
-                </div>
+                    @forelse($recentActivities as $activity)
+                        <div class="activity-item mb-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    {{-- STATUS LOGIC --}}
+                                    @if($activity->status === 'completed')
+                                        <span class="text-white fw-semibold">Completed</span>
+                                        <span class="text-info"> {{ $activity->media->title }}</span>
 
-                <div class="activity-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <span class="text-white fw-semibold">Added to planning</span>
-                            <span class="text-info"> True Beauty</span>
-                            <div class="text-muted small mt-1">
-                                <i class="bi bi-clock"></i> 1 day ago
+                                        @if($activity->rating)
+                                            <span class="text-white"> and rated it </span>
+                                            <span class="text-warning">★ {{ number_format($activity->rating, 1) }}</span>
+                                        @endif
+
+                                    @elseif($activity->status === 'watching')
+                                        <span class="text-white fw-semibold">
+                                            Watching episode {{ $activity->progress }}
+                                        </span>
+                                        <span class="text-info"> of {{ $activity->media->title }}</span>
+                                    
+                                    @elseif($activity->status === 'reading')
+                                        <span class="text-white fw-semibold">
+                                            Reading chapter {{ $activity->progress }}
+                                        </span>
+                                        <span class="text-info"> of {{ $activity->media->title }}</span>
+
+                                    @elseif($activity->status === 'planned')
+                                        <span class="text-white fw-semibold">Added to planning</span>
+                                        <span class="text-info"> {{ $activity->media->title }}</span>
+                                    @endif
+
+                                    {{-- TIME --}}
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-clock"></i>
+                                        {{ $activity->updated_at->diffForHumans() }}
+                                    </div>
+                                </div>
+
+                                {{-- TYPE --}}
+                                <span class="badge-custom">
+                                    {{ ucfirst($activity->media->type) }}
+                                </span>
                             </div>
                         </div>
-                        <span class="badge-custom">Drama</span>
-                    </div>
+                    @empty
+                        <p class="text-muted small">No recent activity yet.</p>
+                    @endforelse
                 </div>
-            </div>
 
             <!-- Tabs Navigation -->
-            <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
+            <ul class="nav nav-tabs nav-tabs-custom mb-4 px-4" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" data-bs-toggle="tab" href="#dramas">Dramas</a>
                 </li>
@@ -262,313 +277,188 @@
             </ul>
 
             <!-- Tab Content -->
-            <div class="tab-content">
+            <div class="tab-content px-4">
                 
-                <!-- Dramas Tab -->
+                <!-- Dramas Tab -->     
                 <div class="tab-pane fade show active" id="dramas">
                     
                     <!-- Trending Dramas -->
-                    <div class="mb-4">
-                        <h5 class="section-title">
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <h5 class="section-title mb-0">
                             <i class="bi bi-fire"></i> Trending Dramas
                         </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/14b8a6/ffffff?text=Queen+of+Tears" alt="Drama">
+                        <a href="{{ route('browse.index', ['type' => 'drama', 'sort' => 'trending']) }}"
+                            class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                            <i class="bi bi-arrow-right"></i> Show All
+                        </a>
+                    </div>
+                    <div class="horizontal-scroll">
+                        @foreach($trendingDramas as $drama)
+                            <a href="{{ route('media.show', $drama->id) }}" class="media-card" style="min-width: 180px;">
+                                <img src="{{ Storage::url($drama->poster) }}" alt="{{ $drama->title }}">
                                 <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Queen of Tears</h6>
-                                    <div class="text-warning small">★ 9.2</div>
-                                    <span class="genre-tag">Romance</span>
+                                    <h6>{{ $drama->title }}</h6>
+                                    <div class="text-warning small">
+                                        ★ {{ $drama->user_media_lists_avg_rating ? number_format($drama->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                    </div>
+                                    <div class="genre-tags-wrapper">
+                                        @foreach($drama->genres as $genre)
+                                            <span class="genre-tag">{{ $genre->name }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/3b82f6/ffffff?text=The+Glory" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">The Glory</h6>
-                                    <div class="text-warning small">★ 9.0</div>
-                                    <span class="genre-tag">Thriller</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/8b5cf6/ffffff?text=My+Demon" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">My Demon</h6>
-                                    <div class="text-warning small">★ 8.8</div>
-                                    <span class="genre-tag">Fantasy</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/ec4899/ffffff?text=Lovely+Runner" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Lovely Runner</h6>
-                                    <div class="text-warning small">★ 9.3</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f59e0b/ffffff?text=A+Shop+for+Killers" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">A Shop for Killers</h6>
-                                    <div class="text-warning small">★ 8.6</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-                        </div>
+                            </a>
+                        @endforeach
                     </div>
 
                     <!-- Most Popular Dramas -->
-                    <div class="mb-4">
-                        <h5 class="section-title">
-                            <i class="bi bi-heart-fill"></i> Most Popular
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <h5 class="section-title mb-0">
+                            <i class="bi bi-heart-fill"></i> Most Watched
                         </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/ef4444/ffffff?text=Goblin" alt="Drama">
+                        <a href="{{ route('browse.index', ['type' => 'drama', 'sort' => 'popular']) }}"
+                            class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                            <i class="bi bi-arrow-right"></i> Show All
+                        </a>
+                    </div>
+                    <div class="horizontal-scroll">
+                        @foreach($popularDramas as $drama)
+                            <a href="{{ route('media.show', $drama->id) }}" class="media-card" style="min-width: 180px;">
+                                <img src="{{ Storage::url($drama->poster) }}" alt="{{ $drama->title }}">
                                 <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Goblin</h6>
-                                    <div class="text-warning small">★ 9.4</div>
-                                    <span class="genre-tag">Fantasy</span>
+                                    <h6>{{ $drama->title }}</h6>
+                                    <div class="text-warning small">
+                                        ★ {{ $drama->user_media_lists_avg_rating ? number_format($drama->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                    </div>
+                                    <div class="genre-tags-wrapper">
+                                        @foreach($drama->genres as $genre)
+                                            <span class="genre-tag">{{ $genre->name }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/10b981/ffffff?text=Crash+Landing+on+You" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Crash Landing on You</h6>
-                                    <div class="text-warning small">★ 9.5</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/6366f1/ffffff?text=Itaewon+Class" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Itaewon Class</h6>
-                                    <div class="text-warning small">★ 8.9</div>
-                                    <span class="genre-tag">Drama</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/14b8a6/ffffff?text=Hotel+Del+Luna" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Hotel Del Luna</h6>
-                                    <div class="text-warning small">★ 9.1</div>
-                                    <span class="genre-tag">Fantasy</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f97316/ffffff?text=Mr.+Sunshine" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Mr. Sunshine</h6>
-                                    <div class="text-warning small">★ 9.2</div>
-                                    <span class="genre-tag">Historical</span>
-                                </div>
-                            </div>
-                        </div>
+                            </a>
+                        @endforeach
                     </div>
 
-                    <!-- New Dramas -->
-                    <div>
-                        <h5 class="section-title">
-                            <i class="bi bi-stars"></i> New Releases
-                        </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/06b6d4/ffffff?text=Marry+My+Husband" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Marry My Husband</h6>
-                                    <div class="text-warning small">★ 8.7</div>
-                                    <span class="genre-tag">Drama</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/a855f7/ffffff?text=Doctor+Slump" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Doctor Slump</h6>
-                                    <div class="text-warning small">★ 8.5</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/84cc16/ffffff?text=Welcome+to+Samdalri" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Welcome to Samdalri</h6>
-                                    <div class="text-warning small">★ 8.4</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f43f5e/ffffff?text=Perfect+Marriage+Revenge" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Perfect Marriage Revenge</h6>
-                                    <div class="text-warning small">★ 8.3</div>
-                                    <span class="genre-tag">Drama</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/0ea5e9/ffffff?text=Knight+Flower" alt="Drama">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Knight Flower</h6>
-                                    <div class="text-warning small">★ 8.6</div>
-                                    <span class="genre-tag">Historical</span>
-                                </div>
-                            </div>
+                    <!-- New Releases -->
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="section-title mb-0">
+                                <i class="bi bi-stars"></i> New Releases
+                            </h5>
+                            <a href="{{ route('browse.index', ['type' => 'drama', 'sort' => 'newest']) }}"
+                                class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                                <i class="bi bi-arrow-right"></i> Show All
+                            </a>
+                        </div>
+                        <div class="horizontal-scroll mb-2"> <!-- kurangi margin bawah -->
+                            @foreach($newDramas as $drama)
+                                <a href="{{ route('media.show', $drama->id) }}" class="media-card" style="min-width: 180px;">
+                                    <img src="{{ Storage::url($drama->poster) }}" alt="{{ $drama->title }}">
+                                    <div class="media-overlay">
+                                        <h6>{{ $drama->title }}</h6>
+                                        <div class="text-warning small">
+                                            ★ {{ $drama->user_media_lists_avg_rating ? number_format($drama->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                        </div>
+                                        <div class="genre-tags-wrapper">
+                                            @foreach($drama->genres as $genre)
+                                                <span class="genre-tag">{{ $genre->name }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
-                </div>
 
                 <!-- Manhwa Tab -->
                 <div class="tab-pane fade" id="manhwa">
-                    
+
                     <!-- Trending Manhwa -->
-                    <div class="mb-4">
-                        <h5 class="section-title">
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <h5 class="section-title mb-0">
                             <i class="bi bi-fire"></i> Trending Manhwa
                         </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/14b8a6/ffffff?text=Solo+Leveling" alt="Manhwa">
+                        <a href="{{ route('browse.index', ['type' => 'manhwa', 'sort' => 'trending']) }}"
+                            class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                            <i class="bi bi-arrow-right"></i> Show All
+                        </a>
+                    </div>
+                    <div class="horizontal-scroll mb-4">
+                        @foreach($trendingManhwas as $manhwa)
+                            <a href="{{ route('media.show', $manhwa->id) }}" class="media-card" style="min-width: 180px;">
+                                <img src="{{ Storage::url($manhwa->poster) }}" alt="{{ $manhwa->title }}">
                                 <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Solo Leveling</h6>
-                                    <div class="text-warning small">★ 9.8</div>
-                                    <span class="genre-tag">Action</span>
+                                    <h6>{{ $manhwa->title }}</h6>
+                                    <div class="text-warning small">
+                                        ★ {{ $manhwa->user_media_lists_avg_rating ? number_format($manhwa->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                    </div>
+                                    <div class="genre-tags-wrapper">
+                                        @foreach($manhwa->genres as $genre)
+                                            <span class="genre-tag">{{ $genre->name }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/3b82f6/ffffff?text=ORV" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Omniscient Reader</h6>
-                                    <div class="text-warning small">★ 9.7</div>
-                                    <span class="genre-tag">Fantasy</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/8b5cf6/ffffff?text=TBATE" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">The Beginning After The End</h6>
-                                    <div class="text-warning small">★ 9.6</div>
-                                    <span class="genre-tag">Fantasy</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/ec4899/ffffff?text=True+Beauty" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">True Beauty</h6>
-                                    <div class="text-warning small">★ 9.2</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f59e0b/ffffff?text=Eleceed" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Eleceed</h6>
-                                    <div class="text-warning small">★ 9.5</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-                        </div>
+                            </a>
+                        @endforeach
                     </div>
 
                     <!-- Most Popular Manhwa -->
-                    <div class="mb-4">
-                        <h5 class="section-title">
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <h5 class="section-title mb-0">
                             <i class="bi bi-heart-fill"></i> Most Popular
                         </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/ef4444/ffffff?text=Tower+of+God" alt="Manhwa">
+                        <a href="{{ route('browse.index', ['type' => 'manhwa', 'sort' => 'popular']) }}"
+                            class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                            <i class="bi bi-arrow-right"></i> Show All
+                        </a>
+                    </div>
+                    <div class="horizontal-scroll mb-4">
+                        @foreach($popularManhwas as $manhwa)
+                            <a href="{{ route('media.show', $manhwa->id) }}" class="media-card" style="min-width: 180px;">
+                                <img src="{{ Storage::url($manhwa->poster) }}" alt="{{ $manhwa->title }}">
                                 <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Tower of God</h6>
-                                    <div class="text-warning small">★ 9.4</div>
-                                    <span class="genre-tag">Adventure</span>
+                                    <h6>{{ $manhwa->title }}</h6>
+                                    <div class="text-warning small">
+                                        ★ {{ $manhwa->user_media_lists_avg_rating ? number_format($manhwa->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                    </div>
+                                    <div class="genre-tags-wrapper">
+                                        @foreach($manhwa->genres as $genre)
+                                            <span class="genre-tag">{{ $genre->name }}</span>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/10b981/ffffff?text=Lookism" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Lookism</h6>
-                                    <div class="text-warning small">★ 9.3</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/6366f1/ffffff?text=Noblesse" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Noblesse</h6>
-                                    <div class="text-warning small">★ 9.1</div>
-                                    <span class="genre-tag">Supernatural</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/14b8a6/ffffff?text=Windbreaker" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Wind Breaker</h6>
-                                    <div class="text-warning small">★ 9.0</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f97316/ffffff?text=Cheese+in+the+Trap" alt="Manhwa">
-                                                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Cheese in the Trap</h6>
-                                    <div class="text-warning small">★ 8.9</div>
-                                    <span class="genre-tag">Romance</span>
-                                </div>
-                            </div>
-                        </div>
+                            </a>
+                        @endforeach
                     </div>
 
-                    <!-- New Manhwa -->
-                    <div>
-                        <h5 class="section-title">
+                    <!-- New Releases -->
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <h5 class="section-title mb-0">
                             <i class="bi bi-stars"></i> New Releases
                         </h5>
-                        <div class="horizontal-scroll">
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/06b6d4/ffffff?text=SSS+Class+Revival" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">SSS-Class Revival Hunter</h6>
-                                    <div class="text-warning small">★ 9.4</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/a855f7/ffffff?text=Mercenary+Enrollment" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Mercenary Enrollment</h6>
-                                    <div class="text-warning small">★ 9.3</div>
-                                    <span class="genre-tag">Action</span>
-                                </div>
-                            </div>
-
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/84cc16/ffffff?text=Villain+to+Kill" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Villain to Kill</h6>
-                                    <div class="text-warning small">★ 9.1</div>
-                                    <span class="genre-tag">Fantasy</span>
-                                </div>
-                            </div>
-
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placeholder.com/180x280/f43f5e/ffffff?text=Nano+Machine" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Nano Machine</h6>
-                                    <div class="text-warning small">★ 9.6</div>
-                                    <span class="genre-tag">Martial Arts</span>
-                                </div>
-                            </div>
-
-                            <div class="media-card" style="min-width: 180px;">
-                                <img src="https://via.placehold.co/180x280/0ea5e9/ffffff?text=Return+of+Mount+Hua" alt="Manhwa">
-                                <div class="media-overlay">
-                                    <h6 class="text-white mb-1">Return of the Mount Hua Sect</h6>
-                                    <div class="text-warning small">★ 9.7</div>
-                                    <span class="genre-tag">Martial Arts</span>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="{{ route('browse.index', ['type' => 'manhwa', 'sort' => 'newest']) }}"
+                            class="btn btn-outline-info btn-sm d-flex align-items-center gap-1 px-3 py-1 rounded-pill">
+                            <i class="bi bi-arrow-right"></i> Show All
+                        </a>
                     </div>
-
+                    <div class="horizontal-scroll mb-4">
+                        @foreach($newManhwas as $manhwa)
+                            <a href="{{ route('media.show', $manhwa->id) }}" class="media-card" style="min-width: 180px;">
+                                <img src="{{ Storage::url($manhwa->poster) }}" alt="{{ $manhwa->title }}">
+                                <div class="media-overlay">
+                                    <h6>{{ $manhwa->title }}</h6>
+                                    <div class="text-warning small">
+                                        ★ {{ $manhwa->user_media_lists_avg_rating ? number_format($manhwa->user_media_lists_avg_rating, 1) : 'N/A' }}
+                                    </div>
+                                    <div class="genre-tags-wrapper">
+                                        @foreach($manhwa->genres as $genre)
+                                            <span class="genre-tag">{{ $genre->name }}</span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </a>
+                        @endforeach
+                    </div>
                 </div> <!-- end manhwa tab -->
             </div> <!-- end tab-content -->
         </div> <!-- end main content -->

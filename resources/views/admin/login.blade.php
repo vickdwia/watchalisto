@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>Admin Login - Watchalisto</title>
+  <link rel="icon" type="image/png" href="{{ asset('images/logoup.png') }}">
+</head>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: radial-gradient(circle at top, #0d0d0d, #000);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.login-wrapper {
+    background: rgba(20, 20, 20, 0.8);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(13, 148, 136, 0.2);
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(13, 148, 136, 0.4);
+}
+.login-wrapper img {
+    display: block;
+    margin: 0 auto 15px;
+    filter: drop-shadow(0 2px 8px rgba(20, 184, 166, 0.3));
+}
+.login-wrapper h1 {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.login-wrapper > p {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    color: #eaeaea;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+input[type="text"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: rgb(20, 184, 166);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 10px rgba(20, 184, 166, 0.5);
+}
+input::placeholder {
+    color: #9ca9b8;
+}
+.remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 5px 0;
+}
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: rgb(20, 184, 166);
+}
+.remember-me label {
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+}
+button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg, rgb(13, 148, 136), rgb(20, 184, 166));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 0 15px rgba(13, 148, 136, 0.5);
+}
+button[type="submit"]:hover {
+    background: linear-gradient(90deg, rgb(20, 184, 166), rgb(13, 148, 136));
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(20, 184, 166, 0.8);
+}
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+.mt-4 {
+    margin-top: 20px;
+    color: #aaa;
+    font-size: 14px;
+}
+.mt-4 a {
+    color: rgb(20, 184, 166);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.mt-4 a:hover {
+    color: rgb(20, 184, 166);
+    text-shadow: 0 0 8px rgb(20, 184, 166);
+}
+/* Responsive */
+@media (max-width: 480px) {
+    .login-wrapper {
+        padding: 40px 30px;
+    }
+    .login-wrapper h1 {
+        font-size: 24px;
+    }
+}
+</style>
+
+<body>
+  <div class="login-wrapper">
+    <img src="{{ asset('images/logoup.png') }}" alt="Watchalisto" style="width:70px;margin-bottom:15px;">
+    <h1>Admin Login</h1>
+    <p>Login ke akun admin Watchalisto</p>
+
+    <form method="POST" action="{{ route('admin.login.submit') }}">
+        @csrf
+
+        <input type="text" name="name" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        @error('namea')
+            <p style="color:#ef4444;font-size:13px;margin:4px 0 6px;">
+                {{ $message }}
+            </p>
+        @enderror
+
+        <button type="submit">Log In</button>
+    </form>
+  </div>
+</body>
+</html>
